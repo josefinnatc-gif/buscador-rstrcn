@@ -3,41 +3,84 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # ----------------------------------------------------------
-# 🪶 CONFIGURACIÓN BÁSICA DE LA APP
+# 🌿 CONFIGURACIÓN GENERAL
 # ----------------------------------------------------------
-st.set_page_config(page_title="Motor de búsqueda de restauración", page_icon="🔍")
+st.set_page_config(page_title="Motor de Búsqueda CNCR", page_icon="📜", layout="centered")
 
-st.title("🔍 Motor de búsqueda de restauración y conservación")
+# Colores y estilo
+st.markdown("""
+    <style>
+    body {
+        background-color: #f5f1e8; /* beige suave */
+        color: #3a2e2e; /* marrón oscuro */
+        font-family: 'Georgia', serif;
+    }
+    h1, h2, h3, h4 {
+        font-family: 'Georgia', cursive;
+        color: #2b2b2b;
+    }
+    .stTextInput input {
+        border: 1px solid #bfa98a;
+        border-radius: 10px;
+        background-color: #fcfaf7;
+        color: #3a2e2e;
+    }
+    .stButton button {
+        background-color: #c8b6a6;
+        color: white;
+        border-radius: 10px;
+        border: none;
+        font-size: 16px;
+        font-family: 'Georgia', cursive;
+    }
+    .stButton button:hover {
+        background-color: #9bbcc0; /* azul pastel */
+        color: #fff;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# ----------------------------------------------------------
+# 🖋️ TÍTULO Y DESCRIPCIÓN
+# ----------------------------------------------------------
+st.title("📜 Motor de búsqueda de restauración y conservación")
 st.write("""
-Esta es una versión de prueba de un motor de búsqueda para documentos y casos de restauración.  
-Escribe palabras clave (por ejemplo: *Virgen del Carmen*, *ataque biológico*, *madera*, *dorado*)  
+Este motor permite explorar casos documentados de restauración del CNCR.  
+Escribe palabras clave (por ejemplo: *óleo*, *salida 1986*, *pastel sobre tela*, *Santiago*)  
 y el sistema te mostrará los casos más relacionados.
 """)
 
 # ----------------------------------------------------------
-# 📄 DOCUMENTOS DE EJEMPLO
-# (luego puedes reemplazar estos textos por tus fichas reales)
+# 📁 DOCUMENTOS REALES
 # ----------------------------------------------------------
 documents = [
     {
-        "titulo": "Virgen del Carmen",
-        "descripcion": "Escultura en madera policromada restaurada en 2019. Presentaba grietas y pérdida de dorado.",
-        "anio": "2019"
+        "titulo": "Nuevo Mapa de Chile – Código: 051-2",
+        "descripcion": "Libro de ingreso 1 del año 1983. Impresión del año 1878 proveniente de la biblioteca de Santiago. Salida del centro en 2005. No confirmada presencia de foto, requiere búsqueda análoga. ORGANIZAR FECHA."
     },
     {
-        "titulo": "San José",
-        "descripcion": "Escultura en madera atacada por xilófagos. Tratamiento de consolidación estructural en 2020.",
-        "anio": "2020"
+        "titulo": "Sra. Josefina Lira – Código: 053-2",
+        "descripcion": "Pastel sobre tela de fines del siglo XIX, procedente del Museo de Bellas Artes. Ingreso en 1983, sin fecha de salida. Caso importante por conectividad con otros documentos asociados."
     },
     {
-        "titulo": "Retablo colonial",
-        "descripcion": "Reintegración cromática de secciones doradas. Intervención realizada en 2021.",
-        "anio": "2021"
+        "titulo": "Carta de José Miguel Carrera – Código: 058-4",
+        "descripcion": "Ingreso en 1985. Cuenta con información de salida y nombres de restauradores. Sección 'historia': fue escrita por José Miguel Carrera en Mendoza antes de morir y enviada a Santiago en una caja de fósforos. Fecha de la carta: 1821."
     },
     {
-        "titulo": "Lienzo de la Inmaculada Concepción",
-        "descripcion": "Pintura al óleo sobre lienzo. Limpieza superficial y eliminación de barniz oxidado.",
-        "anio": "2018"
+        "titulo": "Litografía Lago Vichuquén de Llico – Código: 059-4",
+        "descripcion": "Detalle en secciones de autor y técnica, incluye descripción de color. Nombre de la restauradora registrado. Salida el 12 de mayo de 1986. Código LP: 108. Posee fotos digitalizadas."
+    },
+    {
+        "titulo": "Desnudo por Jean Jacques Henner – Código: 003-14",
+        "descripcion": "Incluye categoría 'Número inventario museo'. Ingreso el 20 de abril de 1995 y salida el 16 de noviembre del mismo año. Fotos no digitales. UPGD:1004 LP:46."
+    },
+    {
+        "titulo": "Naturaleza muerta por Harnett – Código: 012-14",
+        "descripcion": "Restauradora distinta a las anteriores. Ingreso el 2 de junio de 1995 y salida el 17 de julio de 1995, permaneció 1 mes y 15 días. Código LP:10."
+    },
+    {
+        "titulo": "Globo terráqueo – Código: 024-14",
+        "descripcion": "Técnicas: varillas de madera, papel maché, yeso, papel impreso y protección. Estancia de 4 meses y 3 días. Código LP:43."
     }
 ]
 
@@ -49,16 +92,17 @@ vectorizer = TfidfVectorizer()
 tfidf_matrix = vectorizer.fit_transform(texts)
 
 # ----------------------------------------------------------
-# 🔎 CAMPO DE BÚSQUEDA
+# 🔍 CAMPO DE BÚSQUEDA
 # ----------------------------------------------------------
-query = st.text_input("Escribe tu búsqueda:", "")
+query = st.text_input("🔎 Escribe una palabra clave:", "")
 
 if query:
     query_vector = vectorizer.transform([query])
     similarities = cosine_similarity(query_vector, tfidf_matrix)[0]
     sorted_indices = similarities.argsort()[::-1]
 
-    st.subheader(f"Resultados para: '{query}'")
+    st.markdown("---")
+    st.subheader(f"Resultados para: *{query}*")
 
     found = False
     for i in sorted_indices:
@@ -66,13 +110,14 @@ if query:
             found = True
             doc = documents[i]
             st.markdown(f"""
-            ### 🖼️ {doc['titulo']}
-            **Año:** {doc['anio']}  
-            **Descripción:** {doc['descripcion']}  
-            **Similitud:** `{similarities[i]:.2f}`
-            ---
-            """)
+            <div style='background-color:#faf6f0;padding:15px;border-radius:12px;margin-bottom:10px;'>
+                <h4 style='color:#3a2e2e;'>{doc['titulo']}</h4>
+                <p style='font-size:15px;color:#3a2e2e;'>{doc['descripcion']}</p>
+                <p style='color:#7d7063;'><em>Similitud: {similarities[i]:.2f}</em></p>
+            </div>
+            """, unsafe_allow_html=True)
     if not found:
         st.warning("No se encontraron resultados relevantes.")
 else:
     st.info("Escribe una palabra clave para comenzar la búsqueda.")
+
