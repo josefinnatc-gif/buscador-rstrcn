@@ -87,7 +87,7 @@ documents = [
     },
     {
         "titulo": "Naturaleza muerta por Harnett – Código: 012-14",
-        "descripcion": "Ingreso 2 de junio de 1995, salida 17 de julio 1995. Ubicación: cuerpo E librero 8 estante a carpeta 2.",
+        "descripcion": "Ingreso 2 de junio de 1995, salida 17 de julio de 1995. Ubicación: cuerpo E librero 8 estante a carpeta 2.",
         "adjuntos": [
             {"nombre": "PDF Naturaleza Harnett", "url": "https://raw.githubusercontent.com/josefinnatc-gif/buscador-rstrcn/main/docs/ejemplo.pdf"}
         ]
@@ -118,7 +118,7 @@ if "selected_doc" not in st.session_state:
 # BUSQUEDA Y RESULTADOS
 # ---------------------------
 if st.session_state.selected_doc is None:
-    query = st.text_input("🔎 Escribe una palabra clave:", "")
+    query = st.text_input("🔎 Escribe una palabra clave:", key="input_query")
     if query:
         query_vector = vectorizer.transform([query])
         similarities = cosine_similarity(query_vector, tfidf_matrix)[0]
@@ -131,7 +131,7 @@ if st.session_state.selected_doc is None:
             if similarities[i] > 0:
                 found = True
                 doc = documents[i]
-                if st.button(doc["titulo"], key=i):
+                if st.button(doc["titulo"], key=f"resultado_{i}"):
                     st.session_state.selected_doc = i
                     st.experimental_rerun()
         if not found:
@@ -150,16 +150,12 @@ if st.session_state.selected_doc is not None:
 
     if "adjuntos" in doc and doc["adjuntos"]:
         st.subheader("📎 Documentos adjuntos:")
-        for archivo in doc["adjuntos"]:
+        for idx, archivo in enumerate(doc["adjuntos"]):
             st.markdown(f"- [{archivo['nombre']}]({archivo['url']}) ⤴️", unsafe_allow_html=True)
     else:
         st.info("No hay archivos adjuntos para este caso.")
 
-    if st.button("🔙 Volver a resultados"):
-        st.session_state.selected_doc = None
-        st.experimental_rerun()
-
-    if st.button("🔙 Volver a resultados"):
+    if st.button("🔙 Volver a resultados", key="volver_resultados"):
         st.session_state.selected_doc = None
         st.experimental_rerun()
 
