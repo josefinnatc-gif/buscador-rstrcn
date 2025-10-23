@@ -1,0 +1,5 @@
+streamlit
+scikit-learn
+pandas
+numpy
+Agrego archivo requirements.txt con dependencias
