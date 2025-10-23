@@ -3,7 +3,7 @@ import streamlit as st
 # ---------------------------
 # CONFIGURACIÓN DE LA PÁGINA
 # ---------------------------
-st.set_page_config(page_title="Buscador RSTRCN", page_icon="📜", layout="centered")
+st.set_page_config(page_title="Buscador RSTRCN", layout="centered")
 
 st.title("📚 Buscador de Casos RSTRCN")
 st.write("Busca documentos o casos históricos del repositorio digital.")
@@ -40,7 +40,7 @@ def buscar_documentos(query):
     return resultados
 
 # ---------------------------
-# MANEJO DE ESTADO
+# ESTADO DE LA SESIÓN
 # ---------------------------
 if "selected_doc" not in st.session_state:
     st.session_state.selected_doc = None
@@ -57,25 +57,27 @@ if st.session_state.selected_doc is None:
             for i, doc in enumerate(resultados):
                 if st.button(doc["titulo"], key=i):
                     st.session_state.selected_doc = doc
-                    st.experimental_rerun()
+                    st.experimental_rerun()  # seguro para volver a renderizar
         else:
             st.warning("No se encontraron resultados para esa búsqueda.")
 else:
-    # Mostrar detalle del documento seleccionado
+    # Revisar si el doc existe antes de mostrar
     doc = st.session_state.selected_doc
-    st.header(doc["titulo"])
-    st.write(doc["descripcion"])
+    if doc:
+        st.header(doc.get("titulo", "Sin título"))
+        st.write(doc.get("descripcion", "Sin descripción"))
 
-    # Mostrar archivos adjuntos
-    if doc["ruta_archivos"]:
-        st.subheader("📎 Documentos adjuntos:")
-        for archivo in doc["ruta_archivos"]:
-            st.markdown(
-                f"- [{archivo['nombre']}]({archivo['url']})  ⤴️",
-                unsafe_allow_html=True
-            )
+        if "ruta_archivos" in doc and doc["ruta_archivos"]:
+            st.subheader("📎 Documentos adjuntos:")
+            for archivo in doc["ruta_archivos"]:
+                st.markdown(
+                    f"- [{archivo.get('nombre','Documento')}]({archivo.get('url','#')})  ⤴️",
+                    unsafe_allow_html=True
+                )
+        else:
+            st.info("No hay archivos adjuntos para este caso.")
     else:
-        st.info("No hay archivos adjuntos para este caso.")
+        st.error("Error: documento no encontrado.")
 
     if st.button("🔙 Volver a resultados"):
         st.session_state.selected_doc = None
