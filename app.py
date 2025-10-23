@@ -23,7 +23,7 @@ documents = [
      "descripcion": "Libro de ingreso 1 del año 1983. Impresión 1878. Ubicación: cuerpo E librero 3 estante b carpeta 6.",
      "adjuntos": [{"nombre":"PDF Mapa","url":"https://raw.githubusercontent.com/josefinnatc-gif/buscador-rstrcn/main/docs/ejemplo.pdf"}]},
     {"titulo": "Sra. Josefina Lira – Código: 053-2",
-     "descripcion": "Pastel sobre tela fines XIX. Ingreso 1983. Ubicación: cuerpo E librero 3 estante b carpeta 5.",
+     "descripcion": "Título: Sra. Josefina Lira. Técnica: Pastel sobre tela. Época: fines del siglo XIX. Fecha ultimo ingreso: 1983. Ubicación física: cuerpo E librero 3 estante b carpeta 5.",
      "adjuntos": [{"nombre":"PDF Josefina Lira","url":"https://raw.githubusercontent.com/josefinnatc-gif/buscador-rstrcn/main/docs/ejemplo.pdf"}]},
     {"titulo": "Carta de José Miguel Carrera – Código: 058-4",
      "descripcion": "Ingreso 1985. Historia: escrita por José Miguel Carrera. Fecha carta 1821. Ubicación: cuerpo E librero 3 estante b carpeta 1.",
